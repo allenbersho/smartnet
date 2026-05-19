@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --primary: #0A66FF;
+  --secondary: #1DA1F2;
+  --accent: #00D4FF;
+  --dark-bg: #071B34;
+  --light-bg: #F4F9FF;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --success: #22C55E;
+}
+
+
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+    background-color: #F4F9FF;
+    color: #0F172A;
+    overflow-x: hidden;
+  }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #071B34; }
+::-webkit-scrollbar-thumb { background: #0A66FF; border-radius: 3px; }
+
+/* ── Utility Classes ── */
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-white {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(10, 102, 255, 0.15);
+}
+
+.neon-border {
+  border: 1px solid rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.15), inset 0 0 15px rgba(0, 212, 255, 0.05);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #0A66FF, #00D4FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #0A66FF 0%, #1DA1F2 50%, #00D4FF 100%);
+}
+
+.dark-gradient {
+  background: linear-gradient(135deg, #071B34 0%, #0a2550 50%, #071B34 100%);
+}
+
+/* ── Animated Mesh Background ── */
+.mesh-bg {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(10, 102, 255, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, 0.12) 0%, transparent 40%),
+    radial-gradient(ellipse at 60% 80%, rgba(29, 161, 242, 0.1) 0%, transparent 40%),
+    #F4F9FF;
+}
+
+/* ── Particle canvas ── */
+#particles-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Hero animated gradient ── */
+@keyframes meshMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-bg {
+  background: linear-gradient(-45deg, #071B34, #0f3675, #1e3a8a, #071B34, #082f49, #071B34);
+  background-size: 300% 300%;
+  animation: meshMove 10s ease infinite;
+}
+
+/* ── Glow ── */
+.glow-blue {
+  box-shadow: 0 0 30px rgba(10, 102, 255, 0.4), 0 0 60px rgba(10, 102, 255, 0.2);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+/* ── Pulse ring ── */
+@keyframes pulseRing {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+.pulse-ring::before,
+.pulse-ring::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid rgba(0, 212, 255, 0.6);
+  animation: pulseRing 2s ease-out infinite;
+}
+.pulse-ring::after { animation-delay: 1s; }
+
+/* ── Floating animation ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+.float-anim { animation: float 4s ease-in-out infinite; }
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-8px) rotate(2deg); }
+}
+.float-slow { animation: floatSlow 6s ease-in-out infinite; }
+
+/* ── Counter ── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scroll timeline ── */
+@keyframes drawLine {
+  from { height: 0; }
+  to   { height: 100%; }
+}
+
+/* ── Testimonial scroll ── */
+@keyframes scrollLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.testimonial-track { animation: scrollLeft 30s linear infinite; }
+.testimonial-track:hover { animation-play-state: paused; }
+
+/* ── Card hover ── */
+.service-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.service-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(10, 102, 255, 0.2);
+}
+
+/* ── Gradient border card ── */
+.gradient-border {
+  position: relative;
+  border-radius: 16px;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  background: linear-gradient(135deg, #0A66FF, #00D4FF, #1DA1F2);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.gradient-border:hover::before { opacity: 1; }
+
+/* ── FAQ ── */
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s;
+}
+.faq-answer.open { max-height: 300px; }
+
+/* ── WhatsApp float button ── */
+@keyframes waBounce {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+.wa-btn { animation: waBounce 2.5s ease-in-out infinite; }
+
+/* ── Pricing card ── */
+.pricing-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.pricing-card:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* ── Workflow step ── */
+.workflow-step { position: relative; }
+.workflow-step::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 64px;
+  transform: translateX(-50%);
+  width: 2px;
+  background: linear-gradient(#0A66FF, #00D4FF);
+  height: calc(100% + 16px);
+}
+.workflow-step:last-child::before { display: none; }
+
+/* ── Section fade-in ── */
+.section-hidden {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.section-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Mobile nav ── */
+@media (max-width: 768px) {
+  .mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(7, 27, 52, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(10, 102, 255, 0.3);
+    padding: 8px 0 env(safe-area-inset-bottom);
+  }
+}
