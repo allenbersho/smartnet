@@ -13,15 +13,61 @@ const features = [
   { icon: Bot,      label: 'AI Application Support' },
 ];
 
-const sampleMessages = [
-  { from: 'user', text: 'How do I get a community certificate?' },
-  { from: 'ai',   text: 'You can apply online via Tamil Nadu e-Sevai portal. I\'ll guide you through the steps! Required: Aadhaar, address proof, and ₹60 fee.' },
-  { from: 'user', text: 'Can you help me fill the form?' },
-  { from: 'ai',   text: 'Absolutely! I\'ll auto-fill it using your Aadhaar data. Just upload your document and I\'ll handle the rest. ' },
-];
-
 export default function AISection() {
   const [input, setInput] = useState('');
+  const [messages, setMessages] = useState([
+    {
+      from: 'ai',
+      text: "Hello! I am your AI Assistant. I can help guide you through the e-Sevai application process, list of documents, and services available. Ask me anything!"
+    }
+  ]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input.trim();
+    setMessages((prev) => [...prev, { from: 'user', text: userMessage }]);
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userMessage }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get answer from chatbot backend');
+      }
+
+      const data = await response.json();
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: 'ai',
+          text: data.answer,
+          sources: data.sources || [],
+        },
+      ]);
+    } catch (err) {
+      console.error('Chat error:', err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: 'ai',
+          text: "I'm having trouble connecting to the AI backend. Please verify that the backend server is running (`python AI/main.py` on port 8000) and your GEMINI_API_KEY is correctly set in AI/.env.",
+          isError: true,
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <section id="ai-section" className="py-24 dark-gradient relative overflow-hidden">
@@ -56,56 +102,84 @@ export default function AISection() {
               </div>
 
               {/* Messages */}
-              <div className="p-5 space-y-4 min-h-[280px]">
-                {sampleMessages.map((msg, i) => (
+              <div className="p-5 space-y-4 min-h-[320px] max-h-[400px] overflow-y-auto">
+                {messages.map((msg, i) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
                     className={`flex gap-2 ${msg.from === 'user' ? 'flex-row-reverse' : ''}`}
                   >
                     <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
-                      msg.from === 'ai' ? 'gradient-bg text-white' : 'bg-blue-500/30 text-blue-300'
+                      msg.from === 'ai'
+                        ? msg.isError ? 'bg-red-500 text-white' : 'gradient-bg text-white'
+                        : 'bg-blue-500/30 text-blue-300'
                     }`}>
                       {msg.from === 'ai' ? <Bot size={12} /> : 'U'}
                     </div>
                     <div className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
                       msg.from === 'ai'
-                        ? 'bg-blue-500/15 border border-blue-400/20 text-blue-100 rounded-tl-sm'
+                        ? msg.isError
+                          ? 'bg-red-500/10 border border-red-500/20 text-red-200 rounded-tl-sm'
+                          : 'bg-blue-500/15 border border-blue-400/20 text-blue-100 rounded-tl-sm'
                         : 'gradient-bg text-white rounded-tr-sm'
                     }`}>
-                      {msg.text}
+                      <div className="whitespace-pre-wrap">{msg.text}</div>
+                      {msg.sources && msg.sources.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-blue-500/10 text-xs text-cyan-400/80">
+                          <span className="font-semibold block mb-0.5">Sources referenced:</span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {Array.from(new Set(msg.sources.map(s => s.source))).map((sourceName) => (
+                              <span key={sourceName} className="px-1.5 py-0.5 bg-blue-500/20 rounded border border-blue-400/10 text-[10px] truncate max-w-[150px]" title={sourceName}>
+                                {sourceName}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))}
-                <div className="flex gap-1 pl-9">
-                  {[0, 150, 300].map((d) => (
-                    <span key={d} className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />
-                  ))}
-                </div>
+
+                {isLoading && (
+                  <div className="flex gap-2 animate-pulse">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold gradient-bg text-white">
+                      <Bot size={12} />
+                    </div>
+                    <div className="bg-blue-500/15 border border-blue-400/20 text-blue-100 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm">
+                      <div className="flex gap-1 items-center h-5">
+                        {[0, 150, 300].map((d) => (
+                          <span key={d} className="w-2.5 h-2.5 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: `${d}ms` }} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Input */}
-              <div className="px-4 pb-4">
+              <form onSubmit={handleSendMessage} className="px-4 pb-4">
                 <div className="flex gap-2 bg-white/5 border border-white/10 rounded-xl p-2">
                   <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask me anything about our services..."
-                    className="flex-1 bg-transparent text-white text-sm outline-none px-2 placeholder-gray-500"
+                    placeholder={isLoading ? "AI is thinking..." : "Ask me anything about our services..."}
+                    disabled={isLoading}
+                    className="flex-1 bg-transparent text-white text-sm outline-none px-2 placeholder-gray-500 disabled:opacity-50"
                   />
                   <motion.button
+                    type="submit"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.9 }}
-                    className="w-9 h-9 gradient-bg rounded-lg flex items-center justify-center"
+                    disabled={isLoading}
+                    className="w-9 h-9 gradient-bg rounded-lg flex items-center justify-center disabled:opacity-50"
                   >
                     <Send size={14} className="text-white" />
                   </motion.button>
                 </div>
-              </div>
+              </form>
             </div>
 
             {/* Glow effect */}
