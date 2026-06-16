@@ -33,7 +33,7 @@ export default function AISection() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch('http://127.0.0.1:8000/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export default function AISection() {
         ...prev,
         {
           from: 'ai',
-          text: "I'm having trouble connecting to the AI backend. Please verify that the backend server is running (`python AI/main.py` on port 8000) and your GEMINI_API_KEY is correctly set in AI/.env.",
+          text: "I'm having trouble connecting to the AI backend. Please verify that the backend server is running (`python backend/main.py` on port 8000) and your GEMINI_API_KEY is correctly set in backend/.env.",
           isError: true,
         },
       ]);
@@ -223,15 +223,15 @@ export default function AISection() {
               })}
             </div>
 
-            <motion.a
+            {/* <motion.a
               href="#ai-section"
               whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0,212,255,0.4)' }}
               whileTap={{ scale: 0.95 }}
               className="inline-flex items-center gap-2 px-8 py-4 font-bold rounded-xl border-2 border-cyan-400 text-cyan-300 hover:bg-cyan-400/10 transition-colors"
-            >
-              <Bot size={18} /> Try AI Assistant
-            </motion.a>
-          </motion.div>
+            > */}
+              {/* <Bot size={18} /> Try AI Assistant
+            </motion.a>*/}
+          </motion.div> 
         </div>
       </div>
     </section>
