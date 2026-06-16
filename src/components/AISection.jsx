@@ -31,9 +31,9 @@ export default function AISection() {
     setMessages((prev) => [...prev, { from: 'user', text: userMessage }]);
     setInput('');
     setIsLoading(true);
-
+// const response = await fetch('http://127.0.0.1:8000/api/chat', {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/chat', {
+      const response = await fetch('https://alensmartnet.onrender.com/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
