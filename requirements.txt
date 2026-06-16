@@ -3,7 +3,9 @@ uvicorn[standard]
 python-dotenv
 pydantic
 langchain
-langchain-google-generative-ai
+# langchain-google-generative-ai
+langchain-google-genai
+
 langchain-community
 langchain-classic
 langchain-core
